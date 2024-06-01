@@ -1,4 +1,4 @@
-from service.models import Client, Message, Mailing, Attempt
+from service.models import Client, Message, Mailing, Attempt, Contacts
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -12,6 +12,7 @@ class ClientListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+    success_url = reverse_lazy('service:client_list')
 
 
 class ClientDetailView(DetailView):
@@ -138,7 +139,7 @@ class MailingView(ListView):
 
 class MailingDetailView(DetailView):
     model = Mailing
-    fields = ['time_sending', 'time_end', 'periodicity','status', 'clients']
+    fields = ['time_sending', 'time_end', 'periodicity', 'status', 'clients']
     template_name = 'service/mailing_detail.html'
     success_url = reverse_lazy('service:mailing_list')
 
@@ -191,5 +192,12 @@ class AttemptView(ListView):
     fields = ['status']
     template_name = 'service/attempt_list.html'
     extra_context = {'title': 'Попытки'}
+
+
+class ContactsView(ListView):
+    model = Contacts
+    fields = ['name', 'phone', 'email']
+    extra_context = {'title': 'Контакты'}
+    template_name = 'service/contacts_list.html'
 
 

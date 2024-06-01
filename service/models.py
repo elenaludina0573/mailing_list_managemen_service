@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -8,7 +10,7 @@ class Client (models.Model):
     first_name = models.CharField(max_length=100, **NULLABLE, verbose_name='имя клиента')
     last_name = models.CharField(max_length=100,**NULLABLE,  verbose_name='фамилия клиента')
     comment = models.TextField(**NULLABLE, verbose_name='комментарий клиента')
-    #owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
+    owner = models.ForeignKey(User, default=False, on_delete=models.CASCADE, verbose_name='пользователь')
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -22,6 +24,7 @@ class Message (models.Model):
     subject = models.CharField(max_length=150, verbose_name='тема сообщения')
     text = models.TextField(**NULLABLE, verbose_name='текст сообщения')
     picture = models.ImageField(upload_to='service/', **NULLABLE, verbose_name='картинка сообщения')
+    owner = models.ForeignKey(User, default=False, on_delete=models.CASCADE, verbose_name='пользователь')
 
     def __str__(self):
         return f'{self.subject}'
@@ -48,6 +51,7 @@ class Mailing (models.Model):
     status = models.CharField(max_length=100, choices=status_chose, verbose_name='статус')
     clients = models.ManyToManyField(Client, verbose_name='клиенты')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='сообщение')
+    owner = models.ForeignKey(User, default=False, on_delete=models.CASCADE, verbose_name='пользователь')
 
     def __str__(self):
         return f'{self.time_sending}'
@@ -73,3 +77,17 @@ class Attempt (models.Model):
     class Meta:
         verbose_name = 'попытка'
         verbose_name_plural = 'попытки'
+
+
+class Contacts(models.Model):
+    city = models.CharField(max_length=50, verbose_name="Страна")
+    identity_nalog_number = models.IntegerField(verbose_name="ИНН")
+    address = models.TextField(verbose_name="Адрес")
+    slug = models.CharField(max_length=255, verbose_name="URL", **NULLABLE)
+
+    def __str__(self):
+        return f"{self.city} {self.identity_nalog_number} {self.address}"
+
+    class Meta:
+        verbose_name = "Контакт"
+        verbose_name_plural = "Контакты"
