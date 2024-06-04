@@ -31,7 +31,19 @@ class MessageForm(StyleFormMixin, ModelForm):
         exclude = ("picture",)
 
 
+class MessageModeratorForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Message
+        exclude = ("picture",)
+
+
 class MailingForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Mailing
+        exclude = ("message",)
+
+
+class MailingModeratorForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Mailing
         exclude = ("message",)
