@@ -3,18 +3,19 @@ import secrets
 import string
 
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
+from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView, ListView, DetailView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterFrom, UserProfileFrom
 from users.models import User
 
 
-class UserView(ListView):
+class UserView(LoginRequiredMixin, ListView):
     model = User
     fields = ['email', 'first_name', 'last_name', 'comment']
     template_name = 'users/user_list.html'
@@ -25,7 +26,7 @@ class UserView(ListView):
         return context
 
 
-class UserDDetailView(DetailView):
+class UserDetailView(LoginRequiredMixin,DetailView):
     model = User
     fields = ['email', 'first_name', 'last_name', 'comment']
     template_name = 'users/user_detail.html'
@@ -36,7 +37,7 @@ class UserDDetailView(DetailView):
         return context
 
 
-class UserCreateView(CreateView):
+class UserCreateView(LoginRequiredMixin, CreateView):
     model = User
     fields = ['email', 'first_name', 'last_name', 'comment']
     template_name = 'users/user_from.html'
@@ -48,7 +49,7 @@ class UserCreateView(CreateView):
         return context
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     fields = ['email', 'first_name', 'last_name', 'comment']
     template_name = 'users/user_from.html'
@@ -60,7 +61,7 @@ class UserUpdateView(UpdateView):
         return context
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = 'users/user_delete.html'
     success_url = reverse_lazy('users:user_list')
@@ -140,7 +141,7 @@ class ResetPassword(TemplateView):
         return redirect('users:login')
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileFrom
     success_url = reverse_lazy('users:profile')
